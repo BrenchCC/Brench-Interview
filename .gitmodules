@@ -1,0 +1,5 @@
+[submodule "brench_resume"]
+	path = brench_resume
+	url = ../LLM-Resume-Template-Brench
+	branch = main
+	update = merge
