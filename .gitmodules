@@ -9,3 +9,9 @@
 	url = ../AURA-GRPO
 	branch = main
 	update = merge
+
+[submodule "Coding-Agent-SFT-Demo"]
+	path = project_review/Coding-Agent-SFT-Demo
+	url = ../AURA-GRPO-UI
+	branch = main
+	update = merge
