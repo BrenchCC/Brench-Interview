@@ -3,3 +3,9 @@
 	url = ../LLM-Resume-Template-Brench
 	branch = main
 	update = merge
+
+[submodule "AURA-GRPO"]
+	path = project_review/AURA-GRPO
+	url = ../AURA-GRPO
+	branch = main
+	update = merge
