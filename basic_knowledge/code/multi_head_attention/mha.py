@@ -50,8 +50,9 @@ class MultiHeadAttention(nn.Module):
 
         # 计算注意力分数，使用缩放点积注意力机制，即将Q和K进行矩阵乘法，并除以sqrt(head_dim)而不是hidden_dim进行缩放，得到注意力分数
         # attention_scores: (batch_size, nums_head, seq_len, seq_len) 
+        # torch.matmul(q_state, k_state.transpose(-2, -1)) / math.sqrt(self.head_dim) or using @ operator
         attention_weights = (
-            q_state @ k_state.transpose(-2, -1) / math.sqrt(self.head_dim)
+            q_state @ k_state.transpose(-2, -1) / math.sqrt(self.head_dim) 
         )
         logger.info(f"Attention weights type: {type(attention_weights)}")
         logger.info(f"Attention weights shape: {attention_weights.shape}")
@@ -97,3 +98,6 @@ if __name__ == "__main__":
     X = torch.randn(3, 2, 128)
     mha = MultiHeadAttention(hidden_dim = 128, nums_head = 8)
     output = mha(X, attention_mask)
+    logger.info(f"Output type: {type(output)}")
+    logger.info(f"Output shape: {output.shape}")
+    logger.info(f"Output: {output}")
