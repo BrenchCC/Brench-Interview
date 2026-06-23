@@ -656,3 +656,4 @@ num_layers * 2 * B * H * L_total * d_h
 3. `Q` 不拼接历史,所以 attention score 从普通的 `(B, H, L, L)` 变成 `(B, H, L_cur, L_past + L_cur)`。
 4. 输出长度仍等于当前输入长度,即 `(B, L_cur, D)`；返回的 cache 长度才会增长到 `L_past + L_cur`。
 5. KV Cache 不替代 mask。padding mask 或 causal mask 仍要和 `(B, H, L_cur, L_total)` 对齐。
+
