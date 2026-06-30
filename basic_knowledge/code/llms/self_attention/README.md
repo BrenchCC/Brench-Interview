@@ -39,7 +39,7 @@ S = \frac{QK^T}{\sqrt{D}}
 ```
 
 ```math
-A = \operatorname{softmax}(S)
+A = \mathrm{softmax}(S)
 ```
 
 ```math

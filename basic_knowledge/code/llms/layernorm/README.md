@@ -195,7 +195,7 @@ normalized:                    (B, S, D)
 注意,这行代码和标准 LayerNorm 公式存在差异。当前代码计算的是:
 
 ```math
-\frac{x - \mu}{\sqrt{\operatorname{std}(x) + \epsilon}}
+\frac{x - \mu}{\sqrt{\mathrm{std}(x) + \epsilon}}
 ```
 
 标准写法通常是下面两种之一:

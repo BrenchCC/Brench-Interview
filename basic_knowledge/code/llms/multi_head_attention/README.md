@@ -31,7 +31,7 @@ Q = XW_Q,\quad K = XW_K,\quad V = XW_V
 ```
 
 ```math
-A = \operatorname{softmax}\left(\frac{QK^T}{\sqrt{D}}\right)
+A = \mathrm{softmax}\left(\frac{QK^T}{\sqrt{D}}\right)
 ```
 
 ```math
@@ -48,7 +48,7 @@ D = H \times d_h
 
 ```math
 \text{head}_i =
-\operatorname{softmax}\left(
+\mathrm{softmax}\left(
 \frac{Q_iK_i^T}{\sqrt{d_h}}
 \right)V_i
 ```
@@ -56,7 +56,7 @@ D = H \times d_h
 最后拼接所有 head:
 
 ```math
-O = \operatorname{Concat}(\text{head}_1,\ldots,\text{head}_H)W_O
+O = \mathrm{Concat}(\text{head}_1,\ldots,\text{head}_H)W_O
 ```
 
 这里缩放因子用的是 `sqrt(head_dim)`，不是 `sqrt(hidden_dim)`。原因很直接:每个 head 内部做点积时只使用 `head_dim` 个特征，点积方差主要由 `head_dim` 决定。
@@ -656,4 +656,3 @@ num_layers * 2 * B * H * L_total * d_h
 3. `Q` 不拼接历史,所以 attention score 从普通的 `(B, H, L, L)` 变成 `(B, H, L_cur, L_past + L_cur)`。
 4. 输出长度仍等于当前输入长度,即 `(B, L_cur, D)`；返回的 cache 长度才会增长到 `L_past + L_cur`。
 5. KV Cache 不替代 mask。padding mask 或 causal mask 仍要和 `(B, H, L_cur, L_total)` 对齐。
-

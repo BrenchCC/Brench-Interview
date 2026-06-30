@@ -3,7 +3,7 @@
 RMSNorm 的公式先放在开头:
 
 ```math
-\operatorname{RMS}_{b,s}
+\mathrm{RMS}_{b,s}
 =
 \sqrt{
 \frac{1}{D}
@@ -19,7 +19,7 @@ y_{b,s,i}
 =
 \gamma_i
 \cdot
-\frac{x_{b,s,i}}{\operatorname{RMS}_{b,s}}
+\frac{x_{b,s,i}}{\mathrm{RMS}_{b,s}}
 ```
 
 一句话概括:RMSNorm 不减均值,只用每个 token 在 hidden dimension 上的均方根缩放 hidden vector,再乘以可学习参数 `gamma`。

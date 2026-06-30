@@ -30,7 +30,7 @@ J_{\text{GRPO}}(\theta) =
 \min
 \left(
 r_{i,t}(\theta) A_i,
-\operatorname{clip}(r_{i,t}(\theta), 1 - \epsilon, 1 + \epsilon) A_i
+\mathrm{clip}(r_{i,t}(\theta), 1 - \epsilon, 1 + \epsilon) A_i
 \right)
 - \beta D_{\text{KL}}(\pi_\theta || \pi_{\text{ref}})
 \right]
@@ -102,8 +102,8 @@ token_ids = torch.tensor(
 
 ```math
 A_i =
-\frac{r_i - \operatorname{mean}(\{r_1,\ldots,r_G\})}
-{\operatorname{std}(\{r_1,\ldots,r_G\})}
+\frac{r_i - \mathrm{mean}(\{r_1,\ldots,r_G\})}
+{\mathrm{std}(\{r_1,\ldots,r_G\})}
 ```
 
 这也是 GRPO 和传统 PPO 一个很大的差异:GRPO 不显式训练 value model，而是用 group 内相对分数估计优势。面试里可以直接说，GRPO 用多条采样回答的相对好坏替代 critic value，节省 value model 训练成本，但更依赖每个 prompt 下采样数量和 reward 质量。
@@ -141,7 +141,7 @@ pi_old_logprob = F.log_softmax(pi_old_logits, dim = -1)
 `F.log_softmax(x, dim = -1)` 沿最后一维做 softmax 后取 log。对 `(B, T, V)` 来说，就是对每个 batch、每个位置的 `V` 个候选 token 做归一化:
 
 ```math
-\operatorname{log\_softmax}(z_j)
+\mathrm{log\_softmax}(z_j)
 =
 z_j - \log \sum_{k = 1}^{V} \exp(z_k)
 ```
@@ -529,7 +529,7 @@ ratio_clip * advantage: (B, T) * (B, 1) -> (B, T)
 这里容易被问到一个细节:为什么总是取 `minimum`，而不是根据 advantage 正负切换？PPO 的 clipped objective 写法本身就是:
 
 ```math
-\min(r A, \operatorname{clip}(r, 1 - \epsilon, 1 + \epsilon) A)
+\min(r A, \mathrm{clip}(r, 1 - \epsilon, 1 + \epsilon) A)
 ```
 
 当 advantage 为正时:
