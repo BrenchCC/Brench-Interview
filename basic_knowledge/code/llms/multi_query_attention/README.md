@@ -14,9 +14,9 @@ nums_key_value_head = 1
 
 设输入为:
 
-$$
+```math
 X \in \mathbb{R}^{B \times S \times H}
-$$
+```
 
 其中 `B` 是 batch size,`S` 是 sequence length,`H` 是 hidden dimension。示例中:
 
@@ -48,25 +48,25 @@ assert hidden_dim % nums_head == 0
 
 标准 MHA 会为每个 Query head 配一组 K/V head:
 
-$$
+```math
 Q, K, V \in \mathbb{R}^{B \times N_q \times S \times D}
-$$
+```
 
 MQA 改成:
 
-$$
+```math
 Q \in \mathbb{R}^{B \times N_q \times S \times D}
-$$
+```
 
-$$
+```math
 K, V \in \mathbb{R}^{B \times 1 \times S \times D}
-$$
+```
 
 注意力分数仍然要按 Query head 计算,最终 shape 仍是:
 
-$$
+```math
 \text{AttentionWeights} \in \mathbb{R}^{B \times N_q \times S \times S}
-$$
+```
 
 所以 MQA 不是把 attention weights 的 head 数变成 1,而是让所有 Query head 在计算时共享同一份 K/V。它主要节省的是 K/V 投影参数和推理阶段的 KV Cache。
 
@@ -129,13 +129,13 @@ value = value.repeat_interleave(self.nums_head, dim = 1)
 
 所以:
 
-$$
+```math
 K: (3, 1, 2, 16) \rightarrow (3, 8, 2, 16)
-$$
+```
 
-$$
+```math
 V: (3, 1, 2, 16) \rightarrow (3, 8, 2, 16)
-$$
+```
 
 复制关系可以理解为:
 
@@ -162,19 +162,19 @@ attention_weights = torch.matmul(query, key.transpose(2, 3)) / math.sqrt(self.he
 
 复制后的 `query` 和 `key` shape 分别是:
 
-$$
+```math
 Q: (3, 8, 2, 16)
-$$
+```
 
-$$
+```math
 K: (3, 8, 2, 16)
-$$
+```
 
 `key.transpose(2, 3)` 后变成 `(3, 8, 16, 2)`,所以:
 
-$$
+```math
 QK^T: (3, 8, 2, 16) \times (3, 8, 16, 2) \rightarrow (3, 8, 2, 2)
-$$
+```
 
 除以 `sqrt(head_dim)` 是 scaled dot-product attention 的标准缩放,用于避免点积值过大导致 softmax 饱和。
 
@@ -204,9 +204,9 @@ output = attention_weights @ value
 
 此时:
 
-$$
+```math
 (3, 8, 2, 2) \times (3, 8, 2, 16) \rightarrow (3, 8, 2, 16)
-$$
+```
 
 然后把 head 维合并回 hidden dimension:
 
@@ -218,9 +218,9 @@ output = self.out_proj(output)
 
 shape 变化为:
 
-$$
+```math
 (3, 8, 2, 16) \rightarrow (3, 2, 8, 16) \rightarrow (3, 2, 128)
-$$
+```
 
 最后 `out_proj` 做一次输出投影,shape 保持 `(3, 2, 128)`。
 
@@ -244,23 +244,23 @@ $$
 
 从参数量看,标准 MHA 的 Q/K/V 投影都是 `H -> H`,三者参数量约为:
 
-$$
+```math
 3H^2
-$$
+```
 
 MQA 中,Q 仍是 `H -> H`,K/V 是 `H -> D`。由于 `D = H / N_q`,Q/K/V 投影参数量约为:
 
-$$
+```math
 H^2 + 2H \cdot D = H^2 + 2H^2 \cdot \frac{1}{N_q}
-$$
+```
 
 示例中 `N_q = 8`,所以 K/V 投影参数量从标准 MHA 的 `2H^2` 降为 `2H^2 / 8`。
 
 更重要的是 KV Cache。自回归推理时,每生成一个 token 都要缓存历史 K/V。标准 MHA 的 K/V cache 规模与 `N_q` 成正比,MQA 与 1 个 K/V head 成正比:
 
-$$
+```math
 \text{KVCache}_{MQA} \propto B \times S \times 1 \times D
-$$
+```
 
 这也是面试中更值得强调的收益:MQA 主要优化推理阶段的 KV Cache 存储和读取,尤其在长上下文自回归解码时收益明显。
 

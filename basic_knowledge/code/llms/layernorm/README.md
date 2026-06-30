@@ -2,22 +2,22 @@
 
 LayerNorm 的标准公式先放在开头:
 
-$$
+```math
 \mu_{b,s} = \frac{1}{D}\sum_{i=1}^{D}x_{b,s,i}
-$$
+```
 
-$$
+```math
 \sigma^2_{b,s} = \frac{1}{D}\sum_{i=1}^{D}(x_{b,s,i} - \mu_{b,s})^2
-$$
+```
 
-$$
+```math
 y_{b,s,i} =
 \gamma_i
 \cdot
 \frac{x_{b,s,i} - \mu_{b,s}}{\sqrt{\sigma^2_{b,s} + \epsilon}}
 +
 \beta_i
-$$
+```
 
 一句话概括:LayerNorm 对每个 token 的 hidden dimension 单独计算均值和方差,再用可学习参数 `gamma`、`beta` 做缩放和平移。
 
@@ -46,9 +46,9 @@ output = ln(x)
 
 对 transformer 中常见的输入:
 
-$$
+```math
 X \in \mathbb{R}^{B \times S \times D}
-$$
+```
 
 LayerNorm 会对每个样本、每个 token 的最后一维单独计算均值和方差。也就是说,归一化单元是 `x[b, s, :]`,而不是整个 batch。开头公式中的 `gamma` 和 `beta` 都是长度为 `D` 的可学习参数。它们不随 batch 和 sequence 变化,只对应 hidden dimension 的每个通道。
 
@@ -194,9 +194,9 @@ normalized:                    (B, S, D)
 
 注意,这行代码和标准 LayerNorm 公式存在差异。当前代码计算的是:
 
-$$
+```math
 \frac{x - \mu}{\sqrt{\operatorname{std}(x) + \epsilon}}
-$$
+```
 
 标准写法通常是下面两种之一:
 

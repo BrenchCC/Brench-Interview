@@ -2,7 +2,7 @@
 
 RMSNorm 的公式先放在开头:
 
-$$
+```math
 \operatorname{RMS}_{b,s}
 =
 \sqrt{
@@ -12,15 +12,15 @@ x_{b,s,i}^{2}
 +
 \epsilon
 }
-$$
+```
 
-$$
+```math
 y_{b,s,i}
 =
 \gamma_i
 \cdot
 \frac{x_{b,s,i}}{\operatorname{RMS}_{b,s}}
-$$
+```
 
 一句话概括:RMSNorm 不减均值,只用每个 token 在 hidden dimension 上的均方根缩放 hidden vector,再乘以可学习参数 `gamma`。
 
@@ -50,9 +50,9 @@ output = rn(x)
 
 对 transformer 中常见的 hidden state:
 
-$$
+```math
 X \in \mathbb{R}^{B \times S \times D}
-$$
+```
 
 RMSNorm 对每个样本、每个 token 的最后一维计算 root mean square。开头公式中的 `gamma` 是长度为 `D` 的可学习缩放参数。RMSNorm 通常没有 `beta`,也不做 `x - mean`。这正是它和 LayerNorm 的核心差异。
 
@@ -60,7 +60,7 @@ RMSNorm 对每个样本、每个 token 的最后一维计算 root mean square。
 
 LayerNorm 的标准形式是:
 
-$$
+```math
 y_i
 =
 \gamma_i
@@ -68,17 +68,17 @@ y_i
 \frac{x_i - \mu}{\sqrt{\sigma^2 + \epsilon}}
 +
 \beta_i
-$$
+```
 
 RMSNorm 的形式是:
 
-$$
+```math
 y_i
 =
 \gamma_i
 \cdot
 \frac{x_i}{\sqrt{\frac{1}{D}\sum_{j=1}^{D}x_j^2 + \epsilon}}
-$$
+```
 
 两者都沿 hidden dimension 做归一化,统计量都来自单个 token 内部,因此都不依赖 batch size。区别在于 LayerNorm 会显式中心化,让归一化后的 hidden vector 均值接近 0;RMSNorm 只控制向量尺度,保留原始均值信息。
 

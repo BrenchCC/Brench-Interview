@@ -26,38 +26,38 @@ output = mha(X, attention_mask)
 
 单头 self-attention 的核心公式是:
 
-$$
+```math
 Q = XW_Q,\quad K = XW_K,\quad V = XW_V
-$$
+```
 
-$$
+```math
 A = \operatorname{softmax}\left(\frac{QK^T}{\sqrt{D}}\right)
-$$
+```
 
-$$
+```math
 O = AV
-$$
+```
 
 multi-head attention 只是把这套计算拆到多个 head 上。若 `hidden_dim = D`、`nums_head = H`、`head_dim = d_h`，通常要求:
 
-$$
+```math
 D = H \times d_h
-$$
+```
 
 每个 head 使用自己那一段 `Q`、`K`、`V` 做 attention:
 
-$$
+```math
 \text{head}_i =
 \operatorname{softmax}\left(
 \frac{Q_iK_i^T}{\sqrt{d_h}}
 \right)V_i
-$$
+```
 
 最后拼接所有 head:
 
-$$
+```math
 O = \operatorname{Concat}(\text{head}_1,\ldots,\text{head}_H)W_O
-$$
+```
 
 这里缩放因子用的是 `sqrt(head_dim)`，不是 `sqrt(hidden_dim)`。原因很直接:每个 head 内部做点积时只使用 `head_dim` 个特征，点积方差主要由 `head_dim` 决定。
 

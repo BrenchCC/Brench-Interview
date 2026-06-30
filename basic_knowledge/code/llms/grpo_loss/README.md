@@ -2,25 +2,25 @@
 
 GRPO 的训练目标可以先写成下面这个形式。设同一个 prompt 采样出一组回答:
 
-$$
+```math
 \{o_i\}_{i = 1}^{G}
-$$
+```
 
 每条回答的 token 数为:
 
-$$
+```math
 |o_i|
-$$
+```
 
 当前策略、采样时的旧策略、参考策略分别为:
 
-$$
+```math
 \pi_\theta,\quad \pi_{\theta_{\text{old}}},\quad \pi_{\text{ref}}
-$$
+```
 
 代码里实现的 per-token surrogate loss 对应:
 
-$$
+```math
 J_{\text{GRPO}}(\theta) =
 \frac{1}{G}
 \sum_{i = 1}^{G}
@@ -34,11 +34,11 @@ r_{i,t}(\theta) A_i,
 \right)
 - \beta D_{\text{KL}}(\pi_\theta || \pi_{\text{ref}})
 \right]
-$$
+```
 
 其中:
 
-$$
+```math
 r_{i,t}(\theta)
 =
 \frac{\pi_\theta(o_{i,t} | q, o_{i,<t})}
@@ -48,11 +48,11 @@ r_{i,t}(\theta)
 \left(
 \log \pi_\theta(o_{i,t}) - \log \pi_{\theta_{\text{old}}}(o_{i,t})
 \right)
-$$
+```
 
 代码中的 KL 估计项为:
 
-$$
+```math
 D_{\text{KL}}(\pi_\theta || \pi_{\text{ref}})
 \approx
 \frac{\pi_{\text{ref}}(o_{i,t})}{\pi_\theta(o_{i,t})}
@@ -61,15 +61,15 @@ D_{\text{KL}}(\pi_\theta || \pi_{\text{ref}})
 \frac{\pi_{\text{ref}}(o_{i,t})}{\pi_\theta(o_{i,t})}
 -
 1
-$$
+```
 
 因为训练通常最小化 loss，代码最后对上面的 objective 取负号:
 
-$$
+```math
 \mathcal{L}_{\text{GRPO}}(\theta)
 =
 -J_{\text{GRPO}}(\theta)
-$$
+```
 
 本文对应 `grpo_loss.py`。我更建议把它当成面试用的最小实现:它保留了 GRPO 中最容易被追问的几块，分别是 group advantage、PPO-style ratio clipping、reference KL penalty、只在 response token 上计算 loss。代码不是完整训练框架，没有 reward model、采样器、优势归一化和分布式训练逻辑。
 
@@ -100,11 +100,11 @@ token_ids = torch.tensor(
 
 `advantage = torch.tensor([-1, 2, 1])` 是每条回答的组内优势。真实 GRPO 通常先对同一 prompt 的多个 reward 做归一化，例如:
 
-$$
+```math
 A_i =
 \frac{r_i - \operatorname{mean}(\{r_1,\ldots,r_G\})}
 {\operatorname{std}(\{r_1,\ldots,r_G\})}
-$$
+```
 
 这也是 GRPO 和传统 PPO 一个很大的差异:GRPO 不显式训练 value model，而是用 group 内相对分数估计优势。面试里可以直接说，GRPO 用多条采样回答的相对好坏替代 critic value，节省 value model 训练成本，但更依赖每个 prompt 下采样数量和 reward 质量。
 
@@ -120,9 +120,9 @@ pi_old_logits = torch.randn(3, 5, 32)
 
 维度含义为:
 
-$$
+```math
 \text{logits} \in \mathbb{R}^{B \times T \times V}
-$$
+```
 
 当前策略、参考策略、旧策略的 shape 都是:
 
@@ -140,11 +140,11 @@ pi_old_logprob = F.log_softmax(pi_old_logits, dim = -1)
 
 `F.log_softmax(x, dim = -1)` 沿最后一维做 softmax 后取 log。对 `(B, T, V)` 来说，就是对每个 batch、每个位置的 `V` 个候选 token 做归一化:
 
-$$
+```math
 \operatorname{log\_softmax}(z_j)
 =
 z_j - \log \sum_{k = 1}^{V} \exp(z_k)
-$$
+```
 
 shape 不变:
 
@@ -193,9 +193,9 @@ output: (B, T, 1)
 
 这一步之后，`pi_logprob`、`pi_ref_logprob`、`pi_old_logprob` 都表示每个位置真实 token 的 log probability:
 
-$$
+```math
 \log \pi(o_t | q, o_{<t}) \in \mathbb{R}^{B \times T}
-$$
+```
 
 ## KL 估计项
 
@@ -234,9 +234,9 @@ pi_ref_logprob.exp() / pi_logprob.exp()
 
 对应:
 
-$$
+```math
 \frac{\pi_{\text{ref}}(o_t)}{\pi_\theta(o_t)}
-$$
+```
 
 第二项:
 
@@ -246,24 +246,24 @@ pi_ref_logprob - pi_logprob
 
 对应:
 
-$$
+```math
 \log \pi_{\text{ref}}(o_t) - \log \pi_\theta(o_t)
 =
 \log
 \frac{\pi_{\text{ref}}(o_t)}{\pi_\theta(o_t)}
-$$
+```
 
 所以整体为:
 
-$$
+```math
 x - \log x - 1,\quad x = \frac{\pi_{\text{ref}}(o_t)}{\pi_\theta(o_t)}
-$$
+```
 
 这个估计值非负，且当下面两个策略在该 token 上概率相同时取 0:
 
-$$
+```math
 \pi_\theta,\quad \pi_{\text{ref}}
-$$
+```
 
 代码返回:
 
@@ -310,9 +310,9 @@ beta = 0.01
 
 `epsilon` 控制 ratio clipping 的范围:
 
-$$
+```math
 r \in [1 - \epsilon, 1 + \epsilon]
-$$
+```
 
 `beta` 控制 KL penalty 的权重。`beta` 越大，当前策略越不容易偏离 reference policy；`beta` 越小，reward 对更新方向的影响越强。
 
@@ -433,7 +433,7 @@ ratio = torch.exp(pi_logprob - pi_old_logprob)
 
 它对应:
 
-$$
+```math
 r_{i,t}(\theta)
 =
 \exp
@@ -442,7 +442,7 @@ r_{i,t}(\theta)
 -
 \log \pi_{\theta_{\text{old}}}(o_{i,t})
 \right)
-$$
+```
 
 ratio 大于 1，说明当前策略比旧策略更倾向生成该 token；ratio 小于 1，则说明当前策略降低了该 token 的概率。
 
@@ -528,21 +528,21 @@ ratio_clip * advantage: (B, T) * (B, 1) -> (B, T)
 
 这里容易被问到一个细节:为什么总是取 `minimum`，而不是根据 advantage 正负切换？PPO 的 clipped objective 写法本身就是:
 
-$$
+```math
 \min(r A, \operatorname{clip}(r, 1 - \epsilon, 1 + \epsilon) A)
-$$
+```
 
 当 advantage 为正时:
 
-$$
+```math
 A > 0
-$$
+```
 
 ratio 被限制在上界，避免过度提高好样本概率。当 advantage 为负时:
 
-$$
+```math
 A < 0
-$$
+```
 
 乘上负数会改变大小关系，`min` 会选择更保守的惩罚方向，避免模型过度降低坏样本概率。这个写法把正负 advantage 的情况合在一个公式里。
 
@@ -641,11 +641,11 @@ len_oi.unsqueeze(dim = 1): (B, 1)
 
 当前示例中，每个 response 长度都是 2，因此每个 response token 的贡献会乘上:
 
-$$
+```math
 -\frac{1}{3} \times \frac{1}{2}
 =
 -\frac{1}{6}
-$$
+```
 
 ### 求和得到标量 loss
 
