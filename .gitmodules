@@ -21,3 +21,9 @@
 	url = ../LLM-Code-Whiteboard
 	branch = main
 	update = merge
+
+[submodule "Policy-Query-Planner"]
+	path = project_review/Policy-Query-Planner
+	url = ../Policy-Query-Planner
+	branch = main
+	update = merge

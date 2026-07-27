@@ -2,12 +2,14 @@
 
 本仓库使用 Git Submodule 管理以下子仓库：
 
-| 子仓库 | 本地路径 | 跟踪分支 |
-| --- | --- | --- |
-| LLM-Resume-Template-Brench | `brench_resume` | `main` |
-| AURA-GRPO | `project_review/AURA-GRPO` | `main` |
-| Coding-Agent-SFT-Demo | `project_review/Coding-Agent-SFT-Demo` | `main` |
-| LLM-Code-Whiteboard | `basic_knowledge/code/LLM-Code-Whiteboard` | `main` |
+
+| 子仓库                     | 本地路径                                   | 跟踪分支 |
+| ---------------------------- | -------------------------------------------- | ---------- |
+| LLM-Resume-Template-Brench | `brench_resume`                            | `main`   |
+| AURA-GRPO                  | `project_review/AURA-GRPO`                 | `main`   |
+| Coding-Agent-SFT-Demo      | `project_review/Coding-Agent-SFT-Demo`     | `main`   |
+| LLM-Code-Whiteboard        | `basic_knowledge/code/LLM-Code-Whiteboard` | `main`   |
+| Policy-Query-Planner       | `project_review/Policy-Query-Planner`      | `main`   |
 
 主仓库只记录每个子仓库的某个 Git 提交，不会自动跟随子仓库的最新提交。
 
@@ -68,6 +70,7 @@ git add brench_resume
 git add project_review/AURA-GRPO
 git add project_review/Coding-Agent-SFT-Demo
 git add basic_knowledge/code/LLM-Code-Whiteboard
+git add project_review/Policy-Query-Planner
 git commit -m "chore: update git submodules"
 git push
 ```
@@ -108,7 +111,35 @@ git push
 
 不要只在主仓库执行 `git add`：主仓库只能记录子仓库提交指针，不能代替子仓库提交其内部文件。
 
-## 6. 常见问题
+## 6. 新增一个子仓库
+
+在主仓库根目录执行：
+
+```bash
+git submodule add -b main ../<子仓库名称> <本地路径>
+git add .gitmodules <本地路径>
+git commit -m "chore: add <子仓库名称> submodule"
+git push
+```
+
+例如添加 `Policy-Query-Planner`：
+
+```bash
+git submodule add -b main ../Policy-Query-Planner project_review/Policy-Query-Planner
+git add .gitmodules project_review/Policy-Query-Planner
+git commit -m "chore: add Policy-Query-Planner submodule"
+git push
+```
+
+其他人拉取主仓库后，执行以下命令即可初始化这个新子仓库：
+
+```bash
+git pull --recurse-submodules
+git submodule sync --recursive
+git submodule update --init --recursive
+```
+
+## 7. 常见问题
 
 ### 子仓库目录为空
 
@@ -151,18 +182,60 @@ git stash pop
 
 ## 常用命令速查
 
+### 修改并提交子仓库
+
+先进入子仓库，拉取最新代码，再修改和提交：
+
+```bash
+cd <子仓库路径>
+git switch main
+git pull --ff-only
+
+# 修改完成后
+git status
+git add <修改的文件>
+git commit -m "<提交信息>"
+git push
+```
+
+回到主仓库，提交更新后的子仓库指针：
+
+```bash
+cd <主仓库路径>
+git add <子仓库路径>
+git commit -m "chore: update <子仓库名称> submodule"
+git push
+```
+
+### 拉取主仓库并同步到指定版本
+
 按主仓库指定版本同步：
 
 ```bash
 git pull --recurse-submodules
+git submodule sync --recursive
 git submodule update --init --recursive
 ```
+
+### 主动拉取所有子仓库的最新版本
 
 更新全部子仓库到远程最新版本：
 
 ```bash
+git submodule sync --recursive
 git submodule update --init --remote --merge --recursive
+git status
 ```
+
+确认变化后，在主仓库提交子仓库指针：
+
+```bash
+git add <发生变化的子仓库路径>
+git commit -m "chore: update git submodules"
+git push
+```
+
+### 查看同步状态
 
 查看全部子仓库状态：
 
