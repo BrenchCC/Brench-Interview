@@ -60,9 +60,9 @@ r_{i,t}(\theta) A_i,
 r_{i,t}(\theta)
 =
 \exp\left(
-\log \pi_\theta(o_{i,t}\mid q,o_{i,<t})
+\log \pi_\theta(o_{i,t}\mid q,o_{i,\lt t})
 -
-\log \pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})
+\log \pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,\lt t})
 \right)
 ```
 
@@ -201,12 +201,12 @@ ratio_clip = torch.clamp(ratio, 1 - epsilon, 1 + epsilon)
 当 `epsilon = 0.2` 时，裁剪区间是 `[0.8, 1.2]`。ratio 的含义很直接：
 
 ```math
-r_{i,t}>1
+r_{i,t}\gt 1
 \Rightarrow
-\pi_\theta(o_{i,t})>\pi_{\theta_{\mathrm{old}}}(o_{i,t})
+\pi_\theta(o_{i,t})\gt\pi_{\theta_{\mathrm{old}}}(o_{i,t})
 ```
 
-当前策略比旧策略更倾向该 token；$r_{i,t}<1$ 则相反。
+当前策略比旧策略更倾向该 token；$r_{i,t}\lt 1$ 则相反。
 
 surrogate 项写成：
 
@@ -221,10 +221,10 @@ policy_gradient = torch.minimum(
 
 | Advantage | 触发零梯度的区域 | 约束的行为 |
 | --- | --- | --- |
-| $A_i>0$ | $r_{i,t}>1+\epsilon$ | 不再奖励过度提高好回答的概率 |
-| $A_i<0$ | $r_{i,t}<1-\epsilon$ | 不再奖励过度降低差回答的概率 |
+| $A_i\gt 0$ | $r_{i,t}\gt 1+\epsilon$ | 不再奖励过度提高好回答的概率 |
+| $A_i\lt 0$ | $r_{i,t}\lt 1-\epsilon$ | 不再奖励过度降低差回答的概率 |
 
-在相反方向上，surrogate 不会被截成常数。例如 $A_i>0$ 且 ratio 下降时，目标仍会惩罚该变化；模型不能借 clipping 忽略一个正在被错误压低概率的好回答。
+在相反方向上，surrogate 不会被截成常数。例如 $A_i\gt 0$ 且 ratio 下降时，目标仍会惩罚该变化；模型不能借 clipping 忽略一个正在被错误压低概率的好回答。
 
 `policy_gradient` 这个变量名容易造成误解。此时张量里存放的是 surrogate objective contribution，并不是真正的梯度；只有调用 `loss.backward()` 后，autograd 才会对模型参数计算 gradient。
 
@@ -356,10 +356,10 @@ loss = loss.sum()
 其中 $S$ 是 clipped policy surrogate。于是：
 
 ```math
-\mathcal{L}<0
+\mathcal{L}\lt 0
 \quad\Longleftrightarrow\quad
 \mathrm{mean}(S)
->
+\gt
 \beta\mathrm{mean}(K)
 ```
 
@@ -422,8 +422,8 @@ loss = loss.sum()
 -r_{i,t}A_i
 ```
 
-- 当 $A_i>0$ 时，导数为负。gradient descent 会提高该 token 的 log probability
-- 当 $A_i<0$ 时，导数为正。gradient descent 会降低该 token 的 log probability
+- 当 $A_i\gt 0$ 时，导数为负。gradient descent 会提高该 token 的 log probability
+- 当 $A_i\lt 0$ 时，导数为正。gradient descent 会降低该 token 的 log probability
 - 当 surrogate 进入 clipping 的常数分支时，policy 项对 ratio 的局部梯度为 0
 
 这里把 token log probability 当成独立变量，只用于说明方向。真实模型中的 logits 通过 softmax 和共享参数耦合，一个 token 的更新也会影响其他 token。

@@ -41,8 +41,8 @@ r_{i,t}(\theta) A_i,
 ```math
 r_{i,t}(\theta)
 =
-\frac{\pi_\theta(o_{i,t} | q, o_{i,<t})}
-{\pi_{\theta_{\text{old}}}(o_{i,t} | q, o_{i,<t})}
+\frac{\pi_\theta(o_{i,t} | q, o_{i,\lt t})}
+{\pi_{\theta_{\text{old}}}(o_{i,t} | q, o_{i,\lt t})}
 =
 \exp
 \left(
@@ -194,7 +194,7 @@ output: (B, T, 1)
 这一步之后，`pi_logprob`、`pi_ref_logprob`、`pi_old_logprob` 都表示每个位置真实 token 的 log probability:
 
 ```math
-\log \pi(o_t | q, o_{<t}) \in \mathbb{R}^{B \times T}
+\log \pi(o_t | q, o_{\lt t}) \in \mathbb{R}^{B \times T}
 ```
 
 ## KL 估计项
@@ -535,13 +535,13 @@ ratio_clip * advantage: (B, T) * (B, 1) -> (B, T)
 当 advantage 为正时:
 
 ```math
-A > 0
+A \gt 0
 ```
 
 ratio 被限制在上界，避免过度提高好样本概率。当 advantage 为负时:
 
 ```math
-A < 0
+A \lt 0
 ```
 
 乘上负数会改变大小关系，`min` 会选择更保守的惩罚方向，避免模型过度降低坏样本概率。这个写法把正负 advantage 的情况合在一个公式里。
