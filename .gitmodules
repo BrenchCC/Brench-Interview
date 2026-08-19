@@ -27,3 +27,13 @@
 	url = ../Policy-Query-Planner
 	branch = main
 	update = merge
+
+[submodule "AgenticArXiv"]
+	path = project_review/AgenticArXiv
+	url = ../AgenticArXiv
+	branch = main
+	update = merge
+[submodule "project_review/AgenticArXiv"]
+	path = project_review/AgenticArXiv
+	url = ../AgenticArXiv
+	branch = main
