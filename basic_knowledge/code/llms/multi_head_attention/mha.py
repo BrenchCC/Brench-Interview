@@ -27,7 +27,7 @@ class MultiHeadAttention(nn.Module):
         # gpt2 和 bert 中都使用了dropout来防止过拟合，dropout的概率一般设置为0.1
         self.attention_dropout = nn.Dropout(0.1)
 
-        # 定义输出的线性变换层，用于将多头注意力的输出映射回hidden_dim维度
+
         self.out_proj = nn.Linear(hidden_dim, hidden_dim)
     
     def forward(self, X, attention_mask = None):
