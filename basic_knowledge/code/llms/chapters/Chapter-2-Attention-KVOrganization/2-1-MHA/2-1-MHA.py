@@ -19,7 +19,7 @@ class MultiHeadAttention(nn.Module):
         self.hidden_dim = hidden_dim
         self.num_heads = num_heads
         self.head_dim = self.hidden_dim // self.num_head
-
+        assert hidden_dim % num_heads == 0, "d_model must be a multiples of num_heads"
 
         # 定义线性变换层，用于将输入的query、key、value映射到多头注意力的维度
         # 一般默认有bias，hidden_dim = nums_head * head_dim, 最终可以看成是n个矩阵的拼接
@@ -36,6 +36,8 @@ class MultiHeadAttention(nn.Module):
 
     def forward(self, x, mask = None):
         """
+        x: (batch, seq_len, d_model)
+        mask: (seq_len, seq_len), True=屏蔽, broadcast到batch和num_heads维度
         """
 
         # Get x shape aka size
@@ -54,21 +56,24 @@ class MultiHeadAttention(nn.Module):
         # q = q.view(batch_size, seq_len, self.num_heads, self.head_dim).permute(0, 2, 1, 3)
         # k = k.view(batch_size, seq_len, self.num_heads, self.head_dim).permute(0, 2, 1, 3)
         # v = v.view(batch_size, seq_len, self.num_heads, self.head_dim).permute(0, 2, 1, 3)
-
+        
+        # 计算注意力得分并添加掩码, scores:(batch, num_heads, seq_len, seq_len)
         scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.head_dim)
         if mask is not None:
             scores = scores.masked_fill(mask, float("-inf"))
 
+        # 计算注意力权重和输出
         attention_weights = F.softmax(scores, dim = -1)
         attention_weights = self.attention_dropout(attention_weights)
 
         attention_output = torch.matmul(attention_weights, v)
 
-        attention_output = attention_output.transpose(1, 2).contiguous()
-        # attention_ourput = attention_output.permute(0, 2, 1, 3).contiguous()
-        attention_output = attention_output.view(batch_size, seq_len, self.hidden_dim)
+        # 合并多头结果
+        attention_output = attention_output.transpose(1, 2).contiguous() # out: (batch, seq_len, num_heads, head_dim)
+        # attention_ourput = attention_output.permute(0, 2, 1, 3).contiguous() # out: (batch, seq_len, num_heads, head_dim)
+        attention_output = attention_output.view(batch_size, seq_len, self.hidden_dim) # (batch_size, seq_len, hidden_dim)
 
-        output = self.output_proj(attention_output)
+        output = self.output_proj(attention_output) # (batch_size, seq_len, hidden_dim)
 
         return output
 
