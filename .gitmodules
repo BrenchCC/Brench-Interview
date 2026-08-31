@@ -37,3 +37,7 @@
 	path = project_review/AgenticArXiv
 	url = ../AgenticArXiv
 	branch = main
+[submodule "basic_knowledge/knowledge/Agent-Harness-Learning"]
+	path = basic_knowledge/knowledge/Agent-Harness-Learning
+	url = ../Agent-Harness-Learning
+	branch = main
