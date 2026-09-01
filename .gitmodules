@@ -28,7 +28,7 @@
 	branch = main
 	update = merge
 
-[submodule "basic_knowledge/knowledge/Agent-Harness-Learning"]
+[submodule "Agent-Harness-Learning"]
 	path = basic_knowledge/knowledge/Agent-Harness-Learning
 	url = ../Agent-Harness-Learning
 	branch = main
