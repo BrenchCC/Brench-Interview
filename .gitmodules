@@ -10,12 +10,6 @@
 	branch = main
 	update = merge
 
-[submodule "Coding-Agent-SFT-Demo"]
-	path = project_review/Coding-Agent-SFT-Demo
-	url = ../Coding-Agent-SFT-Demo
-	branch = main
-	update = merge
-
 [submodule "LLM-Code-Whiteboard"]
 	path = basic_knowledge/code/LLM-Code-Whiteboard
 	url = ../LLM-Code-Whiteboard
