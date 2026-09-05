@@ -22,14 +22,23 @@
 	branch = main
 	update = merge
 
-[submodule "AgenticArXiv"]
-	path = project_review/AgenticArXiv
-	url = ../AgenticArXiv
-	branch = main
-	update = merge
-
 [submodule "Agent-Harness-Learning"]
 	path = basic_knowledge/knowledge/Agent-Harness-Learning
 	url = ../Agent-Harness-Learning
+	branch = main
+	update = merge
+[submodule "MicroLM"]
+	path = project_review/MicroLM
+	url = ../MicroLM
+	branch = main
+	update = merge
+[submodule "Shop-Harness"]
+	path = project_review/Shop-Harness
+	url = ../Shop-Harness
+	branch = main
+	update = merge
+[submodule "MicroOPD"]
+	path = project_review/MicroOPD
+	url = ../MicroOPD
 	branch = main
 	update = merge

@@ -7,9 +7,12 @@
 | ---------------------------- | -------------------------------------------- | ---------- |
 | LLM-Resume-Template-Brench | `brench_resume`                            | `main`   |
 | AURA-GRPO                  | `project_review/AURA-GRPO`                 | `main`   |
-| Coding-Agent-SFT-Demo      | `project_review/Coding-Agent-SFT-Demo`     | `main`   |
+| MicroLM                   | `project_review/MicroLM`                  | `main`   |
+| Shop-Harness              | `project_review/Shop-Harness`             | `main`   |
+| MicroOPD                  | `project_review/MicroOPD`                 | `main`   |
 | LLM-Code-Whiteboard        | `basic_knowledge/code/LLM-Code-Whiteboard` | `main`   |
 | Policy-Query-Planner       | `project_review/Policy-Query-Planner`      | `main`   |
+| Agent-Harness-Learning    | `basic_knowledge/knowledge/Agent-Harness-Learning` | `main`   |
 
 主仓库只记录每个子仓库的某个 Git 提交，不会自动跟随子仓库的最新提交。
 
@@ -68,9 +71,12 @@ git status
 ```bash
 git add brench_resume
 git add project_review/AURA-GRPO
-git add project_review/Coding-Agent-SFT-Demo
+git add project_review/MicroLM
+git add project_review/Shop-Harness
+git add project_review/MicroOPD
 git add basic_knowledge/code/LLM-Code-Whiteboard
 git add project_review/Policy-Query-Planner
+git add basic_knowledge/knowledge/Agent-Harness-Learning
 git commit -m "chore: update git submodules"
 git push
 ```
