@@ -42,3 +42,8 @@
 	url = ../MicroOPD
 	branch = main
 	update = merge
+[submodule "dinov2_with_simclr"]
+	path = project_review/dinov2_with_simclr
+	url = ../dinov2_with_simclr
+	branch = main
+	update = merge
