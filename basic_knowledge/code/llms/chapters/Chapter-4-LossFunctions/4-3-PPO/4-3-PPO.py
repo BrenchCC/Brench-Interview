@@ -62,7 +62,7 @@ def ppo_loss(
     return total_loss
 
 
-def advantage_estimate(
+def advantage_esitimate(
     rewards,
     values,
     dones,
@@ -99,11 +99,6 @@ def advantage_estimate(
     # 返回优势和折扣回报,advantages: (batch, seq_len), returns:(batch, seq_len)
     returns = advantages + values
     return advantages, returns
-
-
-# Backward-compatible alias for the original misspelled function name.
-advantage_esitimate = advantage_estimate
-
 
 if __name__ == "__main__":
     logging.basicConfig(
