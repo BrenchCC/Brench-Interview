@@ -47,3 +47,8 @@
 	url = ../dinov2_with_simclr
 	branch = main
 	update = merge
+[submodule "R1-GRPO-Qwen2.5-RL"]
+	path = project_review/R1-GRPO-Qwen2.5-RL
+	url = ../R1-GRPO-Qwen2.5-RL
+	branch = main
+	update = merge

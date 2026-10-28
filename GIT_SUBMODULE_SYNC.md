@@ -7,6 +7,7 @@
 | ---------------------------- | -------------------------------------------- | ---------- |
 | LLM-Resume-Template-Brench | `brench_resume`                            | `main`   |
 | AURA-GRPO                  | `project_review/AURA-GRPO`                 | `main`   |
+| R1-GRPO-Qwen2.5-RL         | `project_review/R1-GRPO-Qwen2.5-RL`      | `main`   |
 | MicroLM                   | `project_review/MicroLM`                  | `main`   |
 | Shop-Harness              | `project_review/Shop-Harness`             | `main`   |
 | MicroOPD                  | `project_review/MicroOPD`                 | `main`   |
@@ -71,6 +72,7 @@ git status
 ```bash
 git add brench_resume
 git add project_review/AURA-GRPO
+git add project_review/R1-GRPO-Qwen2.5-RL
 git add project_review/MicroLM
 git add project_review/Shop-Harness
 git add project_review/MicroOPD
